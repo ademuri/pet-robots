@@ -1,4 +1,4 @@
-17043637175033247
+17048548971035979
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -75656,6 +75656,13 @@ CMS SOJ
 8
 8
 homebrew
+SOP-8_3.9x4.9mm_P1.27mm_Thermal
+SOP, 8 Pin (http://www.macronix.com/Lists/Datasheet/Attachments/7534/MX25R3235F,%20Wide%20Range,%2032Mb,%20v1.6.pdf#page=79), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOP SO
+0
+9
+9
+homebrew
 SOT-25
 
 
@@ -75788,3 +75795,17 @@ homebrew
 0
 5
 4
+snapeda
+HRO_TYPE-C-31-M-12
+
+
+0
+16
+16
+snapeda
+SO-08
+<B>Small Outline Narrow Plastic Gull Wing</B><p>150-mil body, package type SN
+
+0
+8
+8
