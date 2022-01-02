@@ -1,3 +1,5 @@
+#include "power.h"
+
 const int kLedPin = PB_3;
 
 const int kMotor1A = PA6;
@@ -39,13 +41,28 @@ void setup() {
   analogWriteFrequency(400);
   digitalWrite(kSensorEnable, HIGH);
 
+  Power::Init();
+
+#ifdef TEST
   digitalWrite(kLedPin, HIGH);
   delay(500);
   digitalWrite(kLedPin, LOW);
   delay(500);
+#endif
 }
 
 void loop() {
+#ifdef   TEST
+  test();
+#else
+  digitalWrite(kLedPin, HIGH);
+  Power::Stop1(500);
+  digitalWrite(kLedPin, LOW);
+  Power::Stop1(500);
+#endif
+}
+
+void test() {
   const int motorPinA = kMotor1A;
   const int motorPinB = kMotor1B;
   const int sensorPin = kSensor1;
