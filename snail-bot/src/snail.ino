@@ -18,7 +18,16 @@ const int kSwitch1 = PA4;
 const int kSwitch2 = PC15;
 const int kSwitch3 = PB7;
 
+// If the device was reset via the NRST pin, just wait to be programmed.
+bool pinReset;
+
 void setup() {
+  if (__HAL_RCC_GET_FLAG(RCC_FLAG_LPWRRST) || __HAL_RCC_GET_FLAG(RCC_FLAG_PWRRST) || __HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST)) {
+    pinReset = false;
+  } else {
+    pinReset = __HAL_RCC_GET_FLAG(RCC_FLAG_PINRST);
+  }
+  __HAL_RCC_CLEAR_RESET_FLAGS();
   pinMode(kLedPin, OUTPUT);
 
   pinMode(kMotor1A, OUTPUT);
@@ -43,22 +52,34 @@ void setup() {
 
   Power::Init();
 
-#ifdef TEST
   digitalWrite(kLedPin, HIGH);
   delay(500);
   digitalWrite(kLedPin, LOW);
   delay(500);
-#endif
+
+ delay(1000);
 }
 
 void loop() {
 #ifdef   TEST
   test();
 #else
-  digitalWrite(kLedPin, HIGH);
-  Power::Stop1(500);
-  digitalWrite(kLedPin, LOW);
-  Power::Stop1(500);
+  if (pinReset) {
+    digitalWrite(kLedPin, HIGH);
+    delay(100);
+    digitalWrite(kLedPin, LOW);
+    delay(100);
+  } else {
+    digitalWrite(kLedPin, HIGH);
+    Power::Stop1(100);
+    digitalWrite(kLedPin, LOW);
+    Power::Stop1(3000);
+
+    digitalWrite(kLedPin, HIGH);
+    delay(300);
+    digitalWrite(kLedPin, LOW);
+    delay(3000);
+  }
 #endif
 }
 
@@ -71,11 +92,13 @@ void test() {
   uint32_t light = analogRead(sensorPin);
   analogWrite(kLedPin, light);
 
+  const uint8_t speed = 128;
+
   if (!digitalRead(switchPin)) {
-    analogWrite(motorPinA, 64);
+    analogWrite(motorPinA, speed);
     digitalWrite(motorPinB, 0);
   } else {
-    analogWrite(motorPinA, 256 - 64);
+    analogWrite(motorPinA, 256 - speed);
     digitalWrite(motorPinB, 1);
   }
   delay(5);

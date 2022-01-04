@@ -14,15 +14,18 @@ void Power::Init() {
   HAL_PWR_EnableBkUpAccess();
   // Clear all wakeup-related flags
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF);
-}
 
-void Power::Stop1(uint32_t millis) {
-  // First, set a wakeup timer
   STM32RTC &rtc = STM32RTC::getInstance();
   STM32RTC::Source_Clock clkSrc = rtc.getClockSource();
   // LSI or LSE must be selected as clock source to wakeup the device.
+  // TODO: just select one
   clkSrc = (clkSrc == STM32RTC::HSE_CLOCK) ? STM32RTC::LSI_CLOCK : clkSrc;
-  //rtc.configForLowPower(clkSrc);
+  rtc.setClockSource(clkSrc);
+  rtc.begin();
+}
+
+void Power::Stop1(uint32_t millis) {
+  STM32RTC &rtc = STM32RTC::getInstance();
 
   // Convert to seconds and milliseconds
   uint32_t seconds = millis / 1000;
@@ -36,7 +39,9 @@ void Power::Stop1(uint32_t millis) {
     epoch_millis -= 1000;
   }
 
+  // First, set a wakeup timer
   rtc.setAlarmEpoch(epoch_seconds + seconds, STM32RTC::MATCH_DHHMMSS, epoch_millis);
+
 
   __disable_irq();
   HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
@@ -44,6 +49,7 @@ void Power::Stop1(uint32_t millis) {
   SystemClock_Config();
 
   __enable_irq();
+  
 
   HAL_Delay(10);
 }
