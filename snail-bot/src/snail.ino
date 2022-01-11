@@ -1,4 +1,4 @@
-#include "power.h"
+#include "STM32LowPower.h"
 
 const int kLedPin = PB_3;
 
@@ -50,7 +50,7 @@ void setup() {
   analogWriteFrequency(400);
   digitalWrite(kSensorEnable, HIGH);
 
-  Power::Init();
+  LowPower.begin();
 
   digitalWrite(kLedPin, HIGH);
   delay(500);
@@ -71,9 +71,9 @@ void loop() {
     delay(100);
   } else {
     digitalWrite(kLedPin, HIGH);
-    Power::Stop1(100);
+    LowPower.deepSleep(100);
     digitalWrite(kLedPin, LOW);
-    Power::Stop1(3000);
+    LowPower.deepSleep(3000);
 
     digitalWrite(kLedPin, HIGH);
     delay(300);
